@@ -1,12 +1,8 @@
 package io.yodo.whisper.auth;
 
-import io.yodo.whisper.commons.security.jwt.JWTAuthenticationFilter;
-import io.yodo.whisper.commons.security.jwt.JWTAuthenticationManager;
-import io.yodo.whisper.commons.security.jwt.JWTTokenHelper;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import io.yodo.whisper.commons.security.jwt.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,7 +12,6 @@ import org.springframework.security.web.util.matcher.*;
 
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(JWTTokenHelper.class)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final RequestMatcher secureURLs = new AndRequestMatcher(
@@ -47,19 +42,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JWTAuthenticationFilter authenticationFilter() throws Exception {
-        JWTAuthenticationFilter filter = new JWTAuthenticationFilter(secureURLs);
+    public AuthenticationFilter authenticationFilter() throws Exception {
+        AuthenticationFilter filter = new AuthenticationFilter(secureURLs);
         filter.setAuthenticationManager(authenticationManager());
         return filter;
     }
 
     @Bean
-    public JWTTokenHelper tokenHelper() {
-        return new JWTTokenHelper();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(JWTTokenHelper tokenHelper) {
-        return new JWTAuthenticationManager(tokenHelper);
+    public AuthenticationManager authenticationManager(TokenDecoder decoder) {
+        return new AuthenticationManager(decoder);
     }
 }
