@@ -126,7 +126,7 @@
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<excludes>
-								<exclude>io.yodo.whisper.auth.it.*</exclude>
+								<exclude>io.yodo.whisper.auth.KeyLoaderTest.it.*</exclude>
 							</excludes>
 						</configuration>
 					</plugin>
@@ -135,7 +135,7 @@
 		</profile>
 		<!-- Special profile to run integration tests. Requires https://github.com/joerx/whisper-compose/ -->
 		<profile>
-			<id>integration-tests</id>
+			<id>it</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>

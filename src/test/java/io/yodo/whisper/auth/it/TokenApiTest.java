@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.yodo.whisper.auth.WhisperAuthApplication;
 import io.yodo.whisper.auth.entity.TokenResponse;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,8 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-integration.properties")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = WhisperAuthApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = {WhisperAuthApplication.class})
 class TokenApiTest {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private MockMvc mvc;
@@ -37,7 +41,6 @@ class TokenApiTest {
     @Test
     void testCanIssueToken() throws Exception{
         String data = "{\"client_id\": \"" + testClientId + "\", \"client_secret\": \"" + testClientSecret + "\"}";
-
         mvc.perform(post("/token")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(data))

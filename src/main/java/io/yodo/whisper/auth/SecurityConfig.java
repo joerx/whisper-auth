@@ -1,6 +1,8 @@
 package io.yodo.whisper.auth;
 
 import io.yodo.whisper.commons.security.jwt.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,6 +15,8 @@ import org.springframework.security.web.util.matcher.*;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final RequestMatcher secureURLs = new AndRequestMatcher(
             new AntPathRequestMatcher("/**"),
@@ -45,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationFilter authenticationFilter() throws Exception {
         AuthenticationFilter filter = new AuthenticationFilter(secureURLs);
         filter.setAuthenticationManager(authenticationManager());
+        logger.debug("Created authentication filter " + filter);
         return filter;
     }
 
