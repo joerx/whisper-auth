@@ -14,6 +14,8 @@ jobs:
     env:
       JAVA_HOME: /usr/lib/jvm/zulu-12-azure-amd64
       GIT_REF: ${{ github.ref }}
+      GITHUB_USERNAME: x-access-token
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v1
       - uses: azure/docker-login@v1
@@ -21,6 +23,7 @@ jobs:
           login-server: quay.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      - run: mkdir -p $HOME/.m2 && cp ./.github/workflows/settings.xml $HOME/.m2/settings.xml
       - run: mvn --no-transfer-progress clean package -Dmaven.test.skip=true
       - run: make docker-push
       - run: make docker-push TAG=${GITHUB_SHA:0:8}
