@@ -1,7 +1,10 @@
 package io.yodo.whisper.auth;
 
 import io.yodo.whisper.commons.security.jwt.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,8 +14,11 @@ import org.springframework.security.web.authentication.AnonymousAuthenticationFi
 import org.springframework.security.web.util.matcher.*;
 
 @Configuration
+@ComponentScan("io.yodo.whisper.commons.security.config")
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final RequestMatcher secureURLs = new AndRequestMatcher(
             new AntPathRequestMatcher("/**"),
@@ -42,14 +48,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationFilter authenticationFilter() throws Exception {
-        AuthenticationFilter filter = new AuthenticationFilter(secureURLs);
+    public JWTAuthenticationFilter authenticationFilter() throws Exception {
+        JWTAuthenticationFilter filter = new JWTAuthenticationFilter(secureURLs);
         filter.setAuthenticationManager(authenticationManager());
+        logger.debug("Created authentication filter " + filter);
         return filter;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(TokenDecoder decoder) {
-        return new AuthenticationManager(decoder);
+    public JWTAuthenticationManager authenticationManager(TokenDecoder decoder) {
+        return new JWTAuthenticationManager(decoder);
     }
 }
